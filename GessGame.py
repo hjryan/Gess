@@ -417,72 +417,90 @@ class GessGame:
         proposed_column_change = center_to[0] - center_from[0]
 
         if self._move_direction == 'south':
-            # while we still have rows to check
-            if proposed_row_change > 1:
-                # if the row north of the current south square of the piece is not blank, return True
-                potential_blockages = self.get_south_row(self._board, self.get_south_location(center_from))
-                for element in potential_blockages:
-                    if element != ' ':
-                        return True
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                print("proposed row change: ", proposed_row_change)
+                # if the row south of the current south square of the piece is not blank, return True
+                potential_blockages = self.get_south_row(self._board, self.get_south_location(center))
+                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next row, and decrement the rows to check
-                else:
-                    center_from = self.get_south_location(center_from)
-                    proposed_row_change -= 1
+                center = self.get_south_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    print(element)
+                    if element != ' ':
+                        print("is_blocked returns True")
+                        return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
+                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'north':
             proposed_row_change = proposed_row_change * - 1
-            # while we still have rows to check
-            if proposed_row_change > 1:
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                print("proposed row change: ", proposed_row_change)
                 # if the row north of the current north square of the piece is not blank, return True
-                potential_blockages = self.get_north_row(self._board, self.get_north_location(center_from))
-                for element in potential_blockages:
-                    if element != ' ':
-                        return True
+                potential_blockages = self.get_north_row(self._board, self.get_north_location(center))
+                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next row, and decrement the rows to check
-                else:
-                    center_from = self.get_north_location(center_from)
-                    proposed_row_change -= 1
+                center = self.get_north_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    print(element)
+                    if element != ' ':
+                        print("is_blocked returns True")
+                        return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
+                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'east':
-            # while we still have rows to check
-            if proposed_column_change > 1:
-                # if the row east of the current east square of the piece is not blank, return True
-                potential_blockages = self.get_east_row(self._board, self.get_east_location(center_from))
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                print("proposed row change: ", proposed_column_change)
+                # if the column east of the current east square of the piece is not blank, return True
+                potential_blockages = self.get_east_row(self._board, self.get_east_location(center))
+                print("potential blockages: ", potential_blockages)
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_east_location(center)
+                proposed_column_change -= 1
                 for element in potential_blockages:
+                    print(element)
                     if element != ' ':
+                        print("is_blocked returns True")
                         return True
-                # otherwise, call the same function for the next row, and decrement the rows to check
-                else:
-                    center_from = self.get_east_location(center_from)
-                    proposed_column_change -= 1
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
+                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'west':
             proposed_column_change = proposed_column_change * - 1
-            # while we still have rows to check
-            if proposed_column_change > 1:
-                # if the row west of the current west square of the piece is not blank, return True
-                potential_blockages = self.get_west_row(self._board, self.get_west_location(center_from))
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                print("proposed row change: ", proposed_column_change)
+                # if the column west of the current west square of the piece is not blank, return True
+                potential_blockages = self.get_west_row(self._board, self.get_west_location(center))
+                print("potential blockages: ", potential_blockages)
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_west_location(center)
+                proposed_column_change -= 1
                 for element in potential_blockages:
+                    print(element)
                     if element != ' ':
+                        print("is_blocked returns True")
                         return True
-                # otherwise, call the same function for the next row, and decrement the rows to check
-                else:
-                    center_from = self.get_west_location(center_from)
-                    proposed_column_change -= 1
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
+                print("is_blocked returns False")
                 return False
-
-
 
     def is_valid_move(self, center_from, center_to):
         """Checks whether move is valid, returns True or False accordingly"""
@@ -520,11 +538,11 @@ class GessGame:
             print("proposed center is in the gutter")
             return False
 
-# game = GessGame()
-# game.get_board()
-# move_result = game.make_move('i3', 'l3')
-# print(move_result)
-# print(game.get_game_state())
+#game = GessGame()
+#game.get_board()
+#move_result = game.make_move('c3', 'c6')
+#print(move_result)
+#print(game.get_game_state())
 # game.make_move
 # state = game.get_game_state()
 # game.resign_game()
