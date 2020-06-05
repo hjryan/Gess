@@ -69,13 +69,10 @@ class GessGame:
         center_to = self.convert_center(center_to)
         # if the game is not over
         if self.get_game_state() == 'UNFINISHED':
-            print("the game's not over")
             # and the piece is valid
             if self.is_valid_piece(center_from) is True:
-                print("i'm a valid piece")
                 # and the move is valid
                 if self.is_valid_move(center_from, center_to) is True:
-                    print("i'm a valid move")
                     # make the move, clean the gutters, check for rings, check for winners, & change current player
                     self.move_piece(self._board, center_from, center_to)
                     self.clean_gutters(self._board)
@@ -85,15 +82,12 @@ class GessGame:
                     return True
                 # move is invalid
                 else:
-                    print("move is invalid")
                     return False
             # piece is invalid
             else:
-                print("piece is invalid")
                 return False
         # game is already over
         else:
-            print("game is already over")
             return False
 
     def convert_center(self, beg_center):
@@ -162,6 +156,22 @@ class GessGame:
         """Returns the location of the space west of the center provided"""
         return center[0] - 1, center[1]
 
+    def get_northwest_location(self, center):
+        """Returns the location of the space northwest of the center provided"""
+        return center[0] - 1, center[1] - 1
+
+    def get_northeast_location(self, center):
+        """Returns the location of the space northeast of the center provided"""
+        return center[0] + 1, center[1] - 1
+
+    def get_southwest_location(self, center):
+        """Returns the location of the space southwest of the center provided"""
+        return center[0] - 1, center[1] + 1
+
+    def get_southeast_location(self, center):
+        """Returns the location of the space southeast of the center provided"""
+        return center[0] + 1, center[1] + 1
+
     def get_piece(self, board, center):
         """Returns the values of the piece using the center provided"""
         return [self.get_center(board, center),
@@ -207,7 +217,6 @@ class GessGame:
         # is the center off the board?
         if self.center_in_gutter(center_from) is True:
             return False
-        # from (row), (column)
         # do all of the squares surrounding the center contain either the current player's stones or blank squares?
         else:
             piece = self.get_piece(self._board, center_from)
@@ -220,10 +229,7 @@ class GessGame:
             return valid_piece
 
     def move_piece(self, board, center_from, center_to):
-        """
-        Once a move has been approved, this function is called to clear the existing piece and repopulate it at its
-        destination
-        """
+        """Once a move has been approved, this function is called to clear the existing piece and repopulate it at its destination"""
         temp_center = board[center_from[1]][center_from[0]]
         temp_north = board[center_from[1] - 1][center_from[0]]
         temp_south = board[center_from[1] + 1][center_from[0]]
@@ -267,27 +273,20 @@ class GessGame:
         Checks whether a player has any rings, returns True or False accordingly.
         For use in checking for winners and checking whether a move is valid.
         """
-        # resetting/initializing ring counts
-        self._black_rings = 0
+        self._black_rings = 0                                   # resetting/initializing ring counts
         self._white_rings = 0
-        # for every center between row 1 & 19 and column 1 & 19
-        for row in range(1, 19):
+        for row in range(1, 19):                                # for every center between row 1 & 19 and column 1 & 19
             for column in range(1, 19):
                 center = row, column
-                # a ring is only a ring if it has no center
-                if self.get_center(board, center) == ' ':
-                    # get a list of the elements in the ring surrounding the center (excluding center)
-                    ring = self.get_piece(board, center)[1:]
+                if self.get_center(board, center) == ' ':       # a ring is only a ring if it has no center
+                    ring = self.get_piece(board, center)[1:]    # get a list of the elements in the ring surrounding the center (excluding center)
                     ring_found = True
-                    # if an element in the ring is different from the first or blank, set ring_found to False
-                    # and check the next center
                     elem = ring[0]
                     for e in ring:
-                        if e != elem or e == ' ':
+                        if e != elem or e == ' ':               # if an element in the ring is different from the first or blank, set ring_found to False
                             ring_found = False
                             break
-                    # if there is a ring, increment the appropriate player's ring count
-                    if ring_found is True:
+                    if ring_found is True:                      # if there is a ring, increment the appropriate player's ring count
                         if elem == "B":
                             self._black_rings += 1
                         if elem == "W":
@@ -305,16 +304,12 @@ class GessGame:
 
     def check_for_eliminating_own_ring(self, center_from, center_to):
         """Checks whether the player's move eliminates their last ring"""
-        # initialize a temporary board for testing the move
-        self._temp_board = []
+        self._temp_board = []                                           # initialize a temporary board for testing the move
         for i in self._board:
             self._temp_board.append(list(i))
-        # make the move on the temporary board
-        self.move_piece(self._temp_board, center_from, center_to)
-        # check whether making the move results in players no longer having rings
-        self.check_for_rings(self._temp_board)
-        # check whether the current player is eliminating all of their own rings
-        if self._black_rings == 0 and self._current_player == 'BLACK':
+        self.move_piece(self._temp_board, center_from, center_to)       # make the move on the temporary board
+        self.check_for_rings(self._temp_board)                          # check how the move impacts rings
+        if self._black_rings == 0 and self._current_player == 'BLACK':  # check whether the current player is eliminating all of their own rings
             return True
         elif self._white_rings == 0 and self._current_player == 'WHITE':
             return True
@@ -330,31 +325,23 @@ class GessGame:
 
     def unlimited_distance(self, center_from):
         """Checks whether a piece has a center, and is thus able to move an unlimited distance if unobstructed"""
-        # has center
-        if self.get_center(self._board, center_from) == self.get_current_player_initial():
+        if self.get_center(self._board, center_from) == self.get_current_player_initial():  # has center
             return True
-        # has no center
-        else:
+        else:                                                                               # has no center
             return False
 
     def violating_distance(self, center_from, center_to):
         """Checks whether the proposed move is further than it is allowed to move"""
         # If there is a stone in the center, the piece can move any unobstructed distance.
-        if self.unlimited_distance(center_from) is True:
-            print("piece has unliminted distance")
+        if self.unlimited_distance(center_from) is True:                # piece has unliminted distance
             return False
         # If the center is empty, the piece can move up to three squares.
         else:
             vertical_movement = abs(center_to[1] - center_from[1])
             horizontal_movement = abs(center_to[0] - center_from[0])
-            if vertical_movement > 3:
-                print("vertical distance is violated")
+            if vertical_movement > 3 or horizontal_movement > 3:        # distance is violated
                 return True
-            elif horizontal_movement > 3:
-                print("horizontal distance is violated")
-                return True
-            else:
-                print("piece has limited distance, but it is not violated")
+            else:                                                       # piece has limited distance, but it is not violated
                 return False
 
     def violating_direction(self, center_from, center_to):
@@ -412,6 +399,7 @@ class GessGame:
 
     def is_blocked(self, center_from, center_to):
         """Checks whether move is blocked by stones, returns True or False accordingly"""
+
         # find the number of rows and columns the piece is expected to move
         proposed_row_change = center_to[1] - center_from[1]
         proposed_column_change = center_to[0] - center_from[0]
@@ -420,21 +408,17 @@ class GessGame:
             # while we still have rows to check, start with original center
             center = center_from
             while proposed_row_change > 1:
-                print("proposed row change: ", proposed_row_change)
                 # if the row south of the current south square of the piece is not blank, return True
                 potential_blockages = self.get_south_row(self._board, self.get_south_location(center))
-                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next row, and decrement the rows to check
                 center = self.get_south_location(center)
                 proposed_row_change -= 1
                 for element in potential_blockages:
                     print(element)
                     if element != ' ':
-                        print("is_blocked returns True")
                         return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
-                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'north':
@@ -442,42 +426,32 @@ class GessGame:
             # while we still have rows to check, start with original center
             center = center_from
             while proposed_row_change > 1:
-                print("proposed row change: ", proposed_row_change)
                 # if the row north of the current north square of the piece is not blank, return True
                 potential_blockages = self.get_north_row(self._board, self.get_north_location(center))
-                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next row, and decrement the rows to check
                 center = self.get_north_location(center)
                 proposed_row_change -= 1
                 for element in potential_blockages:
-                    print(element)
                     if element != ' ':
-                        print("is_blocked returns True")
                         return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
-                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'east':
             # while we still have rows to check, start with original center
             center = center_from
             while proposed_column_change > 1:
-                print("proposed row change: ", proposed_column_change)
                 # if the column east of the current east square of the piece is not blank, return True
                 potential_blockages = self.get_east_row(self._board, self.get_east_location(center))
-                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next column, and decrement the columns to check
                 center = self.get_east_location(center)
                 proposed_column_change -= 1
                 for element in potential_blockages:
-                    print(element)
                     if element != ' ':
-                        print("is_blocked returns True")
                         return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
-                print("is_blocked returns False")
                 return False
 
         elif self._move_direction == 'west':
@@ -485,64 +459,161 @@ class GessGame:
             # while we still have rows to check, start with original center
             center = center_from
             while proposed_column_change > 1:
-                print("proposed row change: ", proposed_column_change)
                 # if the column west of the current west square of the piece is not blank, return True
                 potential_blockages = self.get_west_row(self._board, self.get_west_location(center))
-                print("potential blockages: ", potential_blockages)
                 # otherwise, call the same function for the next column, and decrement the columns to check
                 center = self.get_west_location(center)
                 proposed_column_change -= 1
                 for element in potential_blockages:
-                    print(element)
                     if element != ' ':
-                        print("is_blocked returns True")
                         return True
             # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
             else:
-                print("is_blocked returns False")
                 return False
+
+        elif self._move_direction == 'northwest':
+            # north function but replaced direction we're traveling with northwest
+            proposed_row_change = proposed_row_change * - 1
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                # if the row north of the current north square of the piece is not blank, return True
+                potential_blockages = self.get_north_row(self._board, self.get_north_location(center))
+                # otherwise, call the same function for the next row, and decrement the rows to check
+                center = self.get_northwest_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            proposed_column_change = proposed_column_change * - 1
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                # if the column west of the current west square of the piece is not blank, return True
+                potential_blockages = self.get_west_row(self._board, self.get_west_location(center))
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_northwest_location(center)
+                proposed_column_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
+            else:
+                return False
+
+        elif self._move_direction == 'northeast':
+            # north function but replaced direction we're traveling with northeast
+            proposed_row_change = proposed_row_change * - 1
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                # if the row north of the current north square of the piece is not blank, return True
+                potential_blockages = self.get_north_row(self._board, self.get_north_location(center))
+                # otherwise, call the same function for the next row, and decrement the rows to check
+                center = self.get_northeast_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                # if the column east of the current east square of the piece is not blank, return True
+                potential_blockages = self.get_east_row(self._board, self.get_east_location(center))
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_northeast_location(center)
+                proposed_column_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
+            else:
+                return False
+
+        elif self._move_direction == 'southwest':
+            # south function but replaced direction we're traveling with southwest
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                # if the row south of the current south square of the piece is not blank, return True
+                potential_blockages = self.get_south_row(self._board, self.get_south_location(center))
+                # otherwise, call the same function for the next row, and decrement the rows to check
+                center = self.get_southwest_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    print(element)
+                    if element != ' ':
+                        return True
+
+            proposed_column_change = proposed_column_change * - 1
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                # if the column west of the current west square of the piece is not blank, return True
+                potential_blockages = self.get_west_row(self._board, self.get_west_location(center))
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_southwest_location(center)
+                proposed_column_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
+            else:
+                return False
+
+        elif self._move_direction == 'southeast':
+            # south function but replaced direction we're traveling with southeast
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_row_change > 1:
+                # if the row south of the current south square of the piece is not blank, return True
+                potential_blockages = self.get_south_row(self._board, self.get_south_location(center))
+                # otherwise, call the same function for the next row, and decrement the rows to check
+                center = self.get_southeast_location(center)
+                proposed_row_change -= 1
+                for element in potential_blockages:
+                    print(element)
+                    if element != ' ':
+                        return True
+
+            # while we still have rows to check, start with original center
+            center = center_from
+            while proposed_column_change > 1:
+                # if the column east of the current east square of the piece is not blank, return True
+                potential_blockages = self.get_east_row(self._board, self.get_east_location(center))
+                # otherwise, call the same function for the next column, and decrement the columns to check
+                center = self.get_southeast_location(center)
+                proposed_column_change -= 1
+                for element in potential_blockages:
+                    if element != ' ':
+                        return True
+
+            # if we made it down to only 1 remaining row/col of movement, the piece was not blocked
+            else:
+                return False
+
 
     def is_valid_move(self, center_from, center_to):
         """Checks whether move is valid, returns True or False accordingly"""
-        # is_valid_move will check:
-            # if the distance moved is valid based on the center or lack thereof and any stones in the way
-            # check whether there are pieces between the beginning and the destination that would stop movement short
-            # of this being valid
-        # if the proposed move does not go off the board
-        if self.center_in_gutter(center_to) is False:
-            print("proposed move does not go off the board")
-            # if the move is in an allowed direction based on the edges of the piece
-            if self.violating_direction(center_from, center_to) is False:
-                print("direction is not violated")
-                # if the proposed movement does not violate the distance granted by the center (or lack thereof) of the piece
-                if self.violating_distance(center_from, center_to) is False:
-                    print("distance is not violated")
-                    if self.is_blocked(center_from, center_to) is False:
-                        print("there are no pieces in the way")
-                        # if proposed move would eliminate player's own last ring, return False (move is invalid)
-                        if self.check_for_eliminating_own_ring(center_from, center_to) is True:
-                            print("move eliminates player's own last ring")
-                            return False
-                        else:
-                            print("move does not eliminate player's own last ring")
-                            return True
-                    else:
-                        print("there are pieces in the way")
-                else:
-                    print("distance is violated")
-                    return False
-            else:
-                print("direction is violated")
-                return False
-        else:
-            print("proposed center is in the gutter")
-            return False
 
-#game = GessGame()
-#game.get_board()
-#move_result = game.make_move('c3', 'c6')
-#print(move_result)
-#print(game.get_game_state())
-# game.make_move
-# state = game.get_game_state()
-# game.resign_game()
+        if self.center_in_gutter(center_to) is False:                                           # move does not move the center off the board
+            if self.violating_direction(center_from, center_to) is False:                       # direction limit is not violated
+                if self.violating_distance(center_from, center_to) is False:                    # distance limit is not violated
+                    if self.is_blocked(center_from, center_to) is False:                        # there are no stones in the way
+                        if self.check_for_eliminating_own_ring(center_from, center_to) is True: # move eliminates player's own last ring
+                            return False
+                        else:                                                                   # move does not eliminate player's own last ring
+                            return True
+                    else:                                                                       # there are stones in the way
+                        return False
+                else:                                                                           # distance is violated
+                    return False
+            else:                                                                               # direction is violated
+                return False
+        else:                                                                                   # proposed center is in the gutter
+            return False
