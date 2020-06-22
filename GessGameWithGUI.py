@@ -47,10 +47,6 @@ class GessGame:
         for row in self._board:
             print(row)
 
-    def get_board_basic(self):
-        """Returns board"""
-        return self._board
-
     def get_game_state(self):
         """Returns the state of the game"""
         return self._game_state
@@ -556,58 +552,45 @@ class GessGame:
             print("This move is invalid because the proposed center is in the board's outermost row or column.")
             return False
 
-    def draw_board(self, display_board):
+    def draw_board(self):
         """Creates a representation of the board for the player"""
         square_size = 25
+        radius = 12.5
         indent = square_size * 2
         for column in range(20):
             for row in range(20):
-                pygame.draw.rect(screen, (0, 0, 0), (column * square_size + indent, row * square_size + indent, square_size, square_size), 1)
+                # initial grid
+                pygame.draw.rect(screen, (50, 50, 50), (column * square_size + indent, row * square_size + indent, square_size, square_size), 1)
+                # populate stones
+                if self._board[row][column] == 'B':
+                    pygame.draw.circle(screen, (50, 50, 50), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius)
+                if self._board[row][column] == 'W':
+                    pygame.draw.circle(screen, (250, 250, 250), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius)
+                    # boreders for the white stones because otherwise they are garish
+                    pygame.draw.circle(screen, (50, 50, 50), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius, 1)
+        # outside border
+        pygame.draw.rect(screen, (50, 50, 50), (indent, indent, 500, 500), 2)
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(message)
-    image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    return image, image.get_rect()
 
+# create new game
 game = GessGame()
-display_board = game.get_board_basic()
-
-
+# initialize pygame -- set screen size, window name, background image,
 pygame.init()
-
-SQUARESIZE = 25
-
-
-RADIUS = int(SQUARESIZE/2 - 2.5)
-
 screen = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("Gess!")
 background = pygame.image.load("background.png")
 screen.blit(background, (0, 0))
-pygame.display.flip()
-
-#pygame.display.flip()
-
-
-game.draw_board(display_board)
+# draw the board -- grid lines, pieces, etc & update display
+game.draw_board()
 pygame.display.update()
 
+
 while game.get_game_state() == 'UNFINISHED':
-    #screen.fill(BLUE)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print('')
+            print('hell0!')
 
 print(game.get_game_state())
