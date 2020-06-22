@@ -1,7 +1,7 @@
-# Author: Hannah Ryan
-# Date: 5/25/2020
-# Description: Gess Game
+import pygame
+import sys
 
+BLUE = (0,0,255)
 
 class GessGame:
     """
@@ -45,6 +45,10 @@ class GessGame:
         print("  A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T")
         for row in self._board:
             print(row)
+
+    def get_board_basic(self):
+        """Returns board"""
+        return self._board
 
     def get_game_state(self):
         """Returns the state of the game"""
@@ -550,3 +554,34 @@ class GessGame:
         else:                                                                                   # proposed center is in the gutter
             print("This move is invalid because the proposed center is in the board's outermost row or column.")
             return False
+
+    def draw_board(self, display_board):
+        for c in range(20):
+            for r in range(20):
+                pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))
+
+
+game = GessGame()
+display_board = game.get_board_basic()
+
+pygame.init()
+
+SQUARESIZE = 25
+
+size = (500, 500)
+
+RADIUS = int(SQUARESIZE/2 - 2.5)
+
+screen = pygame.display.set_mode(size)
+game.draw_board(display_board)
+pygame.display.update()
+
+while game.get_game_state() == 'UNFINISHED':
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print('')
+
+print(game.get_game_state())
