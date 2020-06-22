@@ -1,7 +1,8 @@
-import pygame
+import os
 import sys
+import pygame
+from pygame.locals import *
 
-BLUE = (0,0,255)
 
 class GessGame:
     """
@@ -556,27 +557,52 @@ class GessGame:
             return False
 
     def draw_board(self, display_board):
-        for c in range(20):
-            for r in range(20):
-                pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))
+        """Creates a representation of the board for the player"""
+        square_size = 25
+        indent = square_size * 2
+        for column in range(20):
+            for row in range(20):
+                pygame.draw.rect(screen, (0, 0, 0), (column * square_size + indent, row * square_size + indent, square_size, square_size), 1)
 
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    try:
+        image = pygame.image.load(fullname)
+    except pygame.error as message:
+        print('Cannot load image:', name)
+        raise SystemExit(message)
+    image = image.convert()
+    if colorkey is not None:
+        if colorkey is -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey, RLEACCEL)
+    return image, image.get_rect()
 
 game = GessGame()
 display_board = game.get_board_basic()
+
 
 pygame.init()
 
 SQUARESIZE = 25
 
-size = (500, 500)
 
 RADIUS = int(SQUARESIZE/2 - 2.5)
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode((600, 600))
+pygame.display.set_caption("Gess!")
+background = pygame.image.load("background.png")
+screen.blit(background, (0, 0))
+pygame.display.flip()
+
+#pygame.display.flip()
+
+
 game.draw_board(display_board)
 pygame.display.update()
 
 while game.get_game_state() == 'UNFINISHED':
+    #screen.fill(BLUE)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
