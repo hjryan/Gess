@@ -17,10 +17,10 @@ This implementation has a couple of extra rules -- a player cannot:
    
 ### How to run:
 The GUI is implemented in Pygame.  
-Pygame does not work with Python 3.8 and above  
+   Pygame does not work with Python 3.8 and above  
   - to correct, run with Python 3.7 or lower  
   
-Additionally, the version of Pygame that is installed by default does not work with the current Mac OS.  
+   Additionally, the version of Pygame that is installed by default does not work with the current Mac OS.  
   - to correct, pip install pygame==2.0.0.dev6
   
 If you don't want to do all that, [here's](https://www.youtube.com/watch?v=P5TjF6mPT5I) a video of a full game.  
