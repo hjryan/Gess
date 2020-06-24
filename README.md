@@ -1,5 +1,5 @@
 ## This is a game of Gess!
-It was made for my Introduction to CS II class as a text-based game. 
+It was made for my Introduction to CS II class as a text-based game.  
 I just grafted on a GUI, which is my first ever GUI 🤠
 
 ![Gess Game](https://j.gifs.com/ROmBlK.gif "Gess")
@@ -12,7 +12,7 @@ There are a number of reasons why a move may not be valid -- if this is the case
 
 This implementation has a couple of extra rules -- a player cannot:
    - make a move that leaves them without a ring (forfeiture)
-   - cannot chose a piece whose center is off the board, or in an outermost row or column
+   - chose a piece whose center is off the board, in an outermost row or an outermost column
    
 ### How to run:
 The GUI is implemented in Pygame.  
