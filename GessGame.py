@@ -550,3 +550,8 @@ class GessGame:
         else:                                                                                   # proposed center is in the gutter
             print("This move is invalid because the proposed center is in the board's outermost row or column.")
             return False
+
+
+game = GessGame()
+move_result = game.make_move('i3', 'i6')
+game.get_board()

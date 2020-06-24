@@ -2,7 +2,6 @@ import os
 import sys
 import pygame
 from pygame.locals import *
-import math
 
 
 class GessGame:
@@ -19,6 +18,7 @@ class GessGame:
         self._white_rings = 0
         self._temp_board = []                       # temporary board used for testing move legality
         self._move_direction = ''                   # player's current move direction (only if valid)
+        self._notification = ''                     # notification to display for player
         self._board = [ # A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T
                         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], #1
                         [' ', ' ', 'B', ' ', 'B', ' ', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', ' ', 'B', ' ', 'B', ' ', ' '], #2
@@ -51,6 +51,10 @@ class GessGame:
     def get_game_state(self):
         """Returns the state of the game"""
         return self._game_state
+
+    def set_notification(self, message):
+        """Sets the notification message"""
+        self._notification = message
 
     def resign_game(self):
         """Lets the current player concede the game, giving the other player the win. Updates game_state accordingly."""
@@ -210,7 +214,7 @@ class GessGame:
         """Checks whether piece is valid"""
         # is the center off the board?
         if self.center_in_gutter(center_from) is True:
-            print("This piece is invalid because its center is on the board's outermost row or column")
+            self._notification = "This piece is invalid because its center is on the board's outermost row or column"
             return False
         # do all of the squares surrounding the center contain either the current player's stones or blank squares?
         else:
@@ -222,7 +226,7 @@ class GessGame:
                     valid_piece = False
                     break
             if valid_piece is False:
-                print("This piece is invalid because it contains the other player's stones.")
+                self._notification = "This piece is invalid because it contains the other player's stones."
             return valid_piece
 
     def move_piece(self, board, center_from, center_to):
@@ -536,21 +540,21 @@ class GessGame:
                 if self.violating_distance(center_from, center_to) is False:                    # distance limit is not violated
                     if self.is_blocked(center_from, center_to) is False:                        # there are no stones in the way
                         if self.check_for_eliminating_own_ring(center_from, center_to) is True:
-                            print("This move is invalid because it eliminates the current player's last ring")
+                            self._notification = "This move is invalid because it eliminates the current player's last ring"
                             return False
                         else:                                                                   # move does not eliminate player's own last ring
                             return True
                     else:
-                        print("This move is invalid because there are stones in the way.")
+                        self._notification = "This move is invalid because there are stones in the way."
                         return False
                 else:                                                                           # distance is violated
-                    print("This move is invalid because it is further than the current piece is permitted to move")
+                    self._notification = "This move is invalid because it is further than the current piece is permitted to move"
                     return False
             else:                                                                               # direction is violated
-                print("This move is invalid because it is in a direction that is not allowed for the chosen piece.")
+                self._notification = "This move is invalid because it is in a direction that is not allowed for the chosen piece."
                 return False
         else:                                                                                   # proposed center is in the gutter
-            print("This move is invalid because the proposed center is in the board's outermost row or column.")
+            self._notification = "This move is invalid because the proposed center is in the board's outermost row or column."
             return False
 
     def draw_board(self):
@@ -559,6 +563,9 @@ class GessGame:
         radius = 12.5
         indent = square_size * 2
         font = pygame.font.Font(None, 24)
+        font2 = pygame.font.Font(None, 20)
+        # this is important because otherwise things just accumulate on the board (stones aren't removed)
+        screen.blit(background, (0, 0))
         for column in range(20):
             for row in range(20):
                 # initial grid
@@ -572,7 +579,7 @@ class GessGame:
                     pygame.draw.circle(screen, (50, 50, 50), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius, 1)
         # outside border
         pygame.draw.rect(screen, (50, 50, 50), (indent, indent, 500, 500), 2)
-        # axes
+        # label axes
         column_text = font.render("A   B   C    D   E    F   G   H    I     J    K   L    M   N   O    P   Q   R    S   T", 1, (50, 50, 50))
         screen.blit(column_text, (57, 35))
         row_1 = font.render("1", 1, (50, 50, 50))
@@ -595,79 +602,86 @@ class GessGame:
         row_18 = font.render("18", 1, (50, 50, 50))
         row_19 = font.render("19", 1, (50, 50, 50))
         row_20 = font.render("20", 1, (50, 50, 50))
-        screen.blit(row_1, (35, 57 + 25 * 0))
-        screen.blit(row_2, (35, 57 + 25 * 1))
-        screen.blit(row_3, (35, 57 + 25 * 2))
-        screen.blit(row_4, (35, 57 + 25 * 3))
-        screen.blit(row_5, (35, 57 + 25 * 4))
-        screen.blit(row_6, (35, 57 + 25 * 5))
-        screen.blit(row_7, (35, 57 + 25 * 6))
-        screen.blit(row_8, (35, 57 + 25 * 7))
-        screen.blit(row_9, (35, 57 + 25 * 8))
-        screen.blit(row_10, (27, 57 + 25 * 9))
-        screen.blit(row_11, (27, 57 + 25 * 10))
-        screen.blit(row_12, (27, 57 + 25 * 11))
-        screen.blit(row_13, (27, 57 + 25 * 12))
-        screen.blit(row_14, (27, 57 + 25 * 13))
-        screen.blit(row_15, (27, 57 + 25 * 14))
-        screen.blit(row_16, (27, 57 + 25 * 15))
-        screen.blit(row_17, (27, 57 + 25 * 16))
-        screen.blit(row_18, (27, 57 + 25 * 17))
-        screen.blit(row_19, (27, 57 + 25 * 18))
-        screen.blit(row_20, (27, 57 + 25 * 19))
+        screen.blit(row_1, (35, 57 + square_size * 0))
+        screen.blit(row_2, (35, 57 + square_size * 1))
+        screen.blit(row_3, (35, 57 + square_size * 2))
+        screen.blit(row_4, (35, 57 + square_size * 3))
+        screen.blit(row_5, (35, 57 + square_size * 4))
+        screen.blit(row_6, (35, 57 + square_size * 5))
+        screen.blit(row_7, (35, 57 + square_size * 6))
+        screen.blit(row_8, (35, 57 + square_size * 7))
+        screen.blit(row_9, (35, 57 + square_size * 8))
+        screen.blit(row_10, (27, 57 + square_size * 9))
+        screen.blit(row_11, (27, 57 + square_size * 10))
+        screen.blit(row_12, (27, 57 + square_size * 11))
+        screen.blit(row_13, (27, 57 + square_size * 12))
+        screen.blit(row_14, (27, 57 + square_size * 13))
+        screen.blit(row_15, (27, 57 + square_size * 14))
+        screen.blit(row_16, (27, 57 + square_size * 15))
+        screen.blit(row_17, (27, 57 + square_size * 16))
+        screen.blit(row_18, (27, 57 + square_size * 17))
+        screen.blit(row_19, (27, 57 + square_size * 18))
+        screen.blit(row_20, (27, 57 + square_size * 19))
 
         # display player whose turn it is
-        current_player_text = font.render("Turn:", 1, (50, 50, 50))
-        screen.blit(current_player_text, (10, 570))
+        # current_player_text = font.render("Turn:", 1, (50, 50, 50))
+        # screen.blit(current_player_text, (10, 570))
         if self._current_player == 'BLACK':
-            pygame.draw.circle(screen, (50, 50, 50), (70, 578), radius)
+            pygame.draw.circle(screen, (50, 50, 50), (25, 25), radius)
         if self._current_player == 'WHITE':
-            pygame.draw.circle(screen, (250, 250, 250), (70, 578), radius)
-            pygame.draw.circle(screen, (50, 50, 50), (70, 578), radius, 1)
+            pygame.draw.circle(screen, (250, 250, 250), (25, 25), radius)
+            pygame.draw.circle(screen, (50, 50, 50), (25, 25), radius, 1)
         pygame.display.update()
 
-        def identify_click(click):
-            # board starts at 50 pixels, each square is 25 pixels
-            if 50 >= starting_position_x <= 75:
-                starting_column = 'a'
-            elif 75 > starting_position_x <= 100:
-                starting_column = 'b'
-            elif 100 > starting_position_x <= 125:
-                starting_column = 'c'
-            elif 125 > starting_position_x <= 150:
-                starting_column = 'd'
-            elif 150 > starting_position_x <= 175:
-                starting_column = 'e'
-            elif 175 > starting_position_x <= 200:
-                starting_column = 'f'
-            elif 200 > starting_position_x <= 225:
-                starting_column = 'g'
-            elif 225 > starting_position_x <= 250:
-                starting_column = 'h'
-            elif 250 > starting_position_x <= 275:
-                starting_column = 'i'
-            elif 275 > starting_position_x <= 300:
-                starting_column = 'j'
-            elif 300 > starting_position_x <= 325:
-                starting_column = 'k'
-            elif 325 > starting_position_x <= 350:
-                starting_column = 'l'
-            elif 350 > starting_position_x <= 375:
-                starting_column = 'm'
-            elif 375 > starting_position_x <= 400:
-                starting_column = 'n'
-            elif 400 > starting_position_x <= 425:
-                starting_column = 'o'
-            elif 425 > starting_position_x <= 450:
-                starting_column = 'p'
-            elif 450 > starting_position_x <= 475:
-                starting_column = 'q'
-            elif 475 > starting_position_x <= 500:
-                starting_column = 'r'
-            elif 500 > starting_position_x <= 525:
-                starting_column = 's'
-            elif 525 > starting_position_x <= 550:
-                starting_column = 't'
+        # display message for user
+        display_text = font2.render(self._notification, 1, (50, 50, 50))
+        screen.blit(display_text, (5, 570))
+
+    def identify_click(self, click):
+        """Translates the user's click into coordinates for the program"""
+        # board starts at 50 pixels, each square is 25 pixels
+        interpretation = ''
+        if 75 > click <= 100:
+            interpretation = 'a1'
+        elif 100 > click <= 125:
+            interpretation = 'b2'
+        elif 125 > click <= 150:
+            interpretation = 'c3'
+        elif 150 > click <= 175:
+            interpretation = 'd4'
+        elif 175 > click <= 200:
+            interpretation = 'e5'
+        elif 200 > click <= 225:
+            interpretation = 'f6'
+        elif 225 > click <= 250:
+            interpretation = 'g7'
+        elif 250 > click <= 275:
+            interpretation = 'h8'
+        elif 275 > click <= 300:
+            interpretation = 'i9'
+        elif 300 > click <= 325:
+            interpretation = 'j10'
+        elif 325 > click <= 350:
+            interpretation = 'k11'
+        elif 350 > click <= 375:
+            interpretation = 'l12'
+        elif 375 > click <= 400:
+            interpretation = 'm13'
+        elif 400 > click <= 425:
+            interpretation = 'n14'
+        elif 425 > click <= 450:
+            interpretation = 'o15'
+        elif 450 > click <= 475:
+            interpretation = 'p16'
+        elif 475 > click <= 500:
+            interpretation = 'q17'
+        elif 500 > click <= 525:
+            interpretation = 'r18'
+        elif 525 > click <= 550:
+            interpretation = 's19'
+        elif 550 > click <= 575:
+            interpretation = 't20'
+        return interpretation
 
 
 # create new game
@@ -680,20 +694,57 @@ background = pygame.image.load("background.png")
 screen.blit(background, (0, 0))
 # draw the board -- grid lines, pieces, etc & update display
 game.draw_board()
-
 pygame.display.update()
 
+from_center = None
+to_center = None
 
 while game.get_game_state() == 'UNFINISHED':
     for event in pygame.event.get():
+
         # makes it possible to close the board
         if event.type == pygame.QUIT:
             sys.exit()
 
-        # get moves from user
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            starting_position_x = event.pos[0]
+        # get moves from user  -- first click - starting position
+        if event.type == pygame.MOUSEBUTTONDOWN and from_center is None:
+            starting_position_x_pixels = event.pos[0]
+            starting_position_x_column = game.identify_click(starting_position_x_pixels)[0]
+            starting_position_y_pixels = event.pos[1]
+            starting_position_y_row = game.identify_click(starting_position_y_pixels)[1:]
+            # translated position
+            from_center = starting_position_x_column + starting_position_y_row
+            game.set_notification('Selected from center: ' + str(from_center))
+            game.draw_board()
+            pygame.display.update()
 
 
+        # get moves from user  -- second click - ending position
+        elif event.type == pygame.MOUSEBUTTONDOWN and from_center is not None:
+            starting_position_x_pixels = event.pos[0]
+            starting_position_x_column = game.identify_click(starting_position_x_pixels)[0]
+            starting_position_y_pixels = event.pos[1]
+            starting_position_y_row = game.identify_click(starting_position_y_pixels)[1:]
+            # translated position
+            to_center = starting_position_x_column + starting_position_y_row
+            # game.set_notification('selected to center: ' + str(to_center))
+            game.set_notification('')
+            # attempt to make move given both positions
+            if game.make_move(from_center, to_center) is True:
+                if game.get_game_state() != 'UNFINISHED':
+                    game.set_notification = str(game.get_game_state())
+                game.draw_board()
+                pygame.display.update()
+                from_center = None
+                to_center = None
+            elif game.make_move(from_center, to_center) is False:
+                game.draw_board()
+                pygame.display.update()
+                from_center = None
+                to_center = None
 
-print(game.get_game_state())
+        if game.get_game_state() != 'UNFINISHED':
+            game.set_notification = str(game.get_game_state())
+            game.draw_board()
+            pygame.display.update()
+            pygame.time.wait(300000)
