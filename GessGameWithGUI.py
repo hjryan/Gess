@@ -1,4 +1,3 @@
-import os
 import sys
 import pygame
 from pygame.locals import *
@@ -79,6 +78,9 @@ class GessGame:
                     self.clean_gutters(self._board)                         # clean the gutters
                     self.check_for_rings(self._board)                       # check for rings
                     self.check_for_winners()                                # check for winners
+                    if self._game_state != 'UNFINISHED':
+                        self._notification = self._game_state
+                        self.draw_board()
                     self.change_current_player()                            # change current player
                     return True
                 else:                                                       # move is invalid
@@ -563,7 +565,7 @@ class GessGame:
         radius = 12.5
         indent = square_size * 2
         font = pygame.font.Font(None, 24)
-        font2 = pygame.font.Font(None, 20)
+        font2 = pygame.font.SysFont("monospace", 20)
         # this is important because otherwise things just accumulate on the board (stones aren't removed)
         screen.blit(background, (0, 0))
         for column in range(20):
@@ -731,8 +733,6 @@ while game.get_game_state() == 'UNFINISHED':
             game.set_notification('')
             # attempt to make move given both positions
             if game.make_move(from_center, to_center) is True:
-                if game.get_game_state() != 'UNFINISHED':
-                    game.set_notification = str(game.get_game_state())
                 game.draw_board()
                 pygame.display.update()
                 from_center = None
@@ -744,7 +744,4 @@ while game.get_game_state() == 'UNFINISHED':
                 to_center = None
 
         if game.get_game_state() != 'UNFINISHED':
-            game.set_notification = str(game.get_game_state())
-            game.draw_board()
-            pygame.display.update()
-            pygame.time.wait(300000)
+            pygame.time.wait(3000)
