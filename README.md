@@ -5,10 +5,11 @@ I just grafted on a GUI, which is my first ever GUI 🤠
 ![Gess Game](https://j.gifs.com/ROmBlK.gif "Gess")
 
 ### Rules:
-The majority of the game rules are available [here](https://www.chessvariants.com/crossover.dir/gess.html).  
-The goal of the game is to be the last player standing with a ring of their own stones.  
+The goal of the game is to be the last player with a ring of their own stones.  
 You play by selecting the center of the 3x3 square you'd like to move, and then selecting your proposed destination center.  
 There are a number of reasons why a move may not be valid -- if this is the case, the interface will print the applicable reason at the bottom of the console.
+
+The majority of the game rules are available [here](https://www.chessvariants.com/crossover.dir/gess.html).  
 
 This implementation has a couple of extra rules -- a player cannot:
    - make a move that leaves them without a ring (forfeiture)
