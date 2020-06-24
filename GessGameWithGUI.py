@@ -2,6 +2,7 @@ import os
 import sys
 import pygame
 from pygame.locals import *
+import math
 
 
 class GessGame:
@@ -625,6 +626,49 @@ class GessGame:
             pygame.draw.circle(screen, (50, 50, 50), (70, 578), radius, 1)
         pygame.display.update()
 
+        def identify_click(click):
+            # board starts at 50 pixels, each square is 25 pixels
+            if 50 >= starting_position_x <= 75:
+                starting_column = 'a'
+            elif 75 > starting_position_x <= 100:
+                starting_column = 'b'
+            elif 100 > starting_position_x <= 125:
+                starting_column = 'c'
+            elif 125 > starting_position_x <= 150:
+                starting_column = 'd'
+            elif 150 > starting_position_x <= 175:
+                starting_column = 'e'
+            elif 175 > starting_position_x <= 200:
+                starting_column = 'f'
+            elif 200 > starting_position_x <= 225:
+                starting_column = 'g'
+            elif 225 > starting_position_x <= 250:
+                starting_column = 'h'
+            elif 250 > starting_position_x <= 275:
+                starting_column = 'i'
+            elif 275 > starting_position_x <= 300:
+                starting_column = 'j'
+            elif 300 > starting_position_x <= 325:
+                starting_column = 'k'
+            elif 325 > starting_position_x <= 350:
+                starting_column = 'l'
+            elif 350 > starting_position_x <= 375:
+                starting_column = 'm'
+            elif 375 > starting_position_x <= 400:
+                starting_column = 'n'
+            elif 400 > starting_position_x <= 425:
+                starting_column = 'o'
+            elif 425 > starting_position_x <= 450:
+                starting_column = 'p'
+            elif 450 > starting_position_x <= 475:
+                starting_column = 'q'
+            elif 475 > starting_position_x <= 500:
+                starting_column = 'r'
+            elif 500 > starting_position_x <= 525:
+                starting_column = 's'
+            elif 525 > starting_position_x <= 550:
+                starting_column = 't'
+
 
 # create new game
 game = GessGame()
@@ -642,10 +686,14 @@ pygame.display.update()
 
 while game.get_game_state() == 'UNFINISHED':
     for event in pygame.event.get():
+        # makes it possible to close the board
         if event.type == pygame.QUIT:
             sys.exit()
 
+        # get moves from user
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print('hi!')
+            starting_position_x = event.pos[0]
+
+
 
 print(game.get_game_state())
