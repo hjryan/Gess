@@ -557,6 +557,7 @@ class GessGame:
         square_size = 25
         radius = 12.5
         indent = square_size * 2
+        font = pygame.font.Font(None, 24)
         for column in range(20):
             for row in range(20):
                 # initial grid
@@ -566,10 +567,63 @@ class GessGame:
                     pygame.draw.circle(screen, (50, 50, 50), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius)
                 if self._board[row][column] == 'W':
                     pygame.draw.circle(screen, (250, 250, 250), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius)
-                    # boreders for the white stones because otherwise they are garish
+                    # borders for the white stones because otherwise they are garish
                     pygame.draw.circle(screen, (50, 50, 50), (int(column * square_size + indent + square_size / 2), int(row * square_size + 2 * square_size + square_size / 2)), radius, 1)
         # outside border
         pygame.draw.rect(screen, (50, 50, 50), (indent, indent, 500, 500), 2)
+        # axes
+        column_text = font.render("A   B   C    D   E    F   G   H    I     J    K   L    M   N   O    P   Q   R    S   T", 1, (50, 50, 50))
+        screen.blit(column_text, (57, 35))
+        row_1 = font.render("1", 1, (50, 50, 50))
+        row_2 = font.render("2", 1, (50, 50, 50))
+        row_3 = font.render("3", 1, (50, 50, 50))
+        row_4 = font.render("4", 1, (50, 50, 50))
+        row_5 = font.render("5", 1, (50, 50, 50))
+        row_6 = font.render("6", 1, (50, 50, 50))
+        row_7 = font.render("7", 1, (50, 50, 50))
+        row_8 = font.render("8", 1, (50, 50, 50))
+        row_9 = font.render("9", 1, (50, 50, 50))
+        row_10 = font.render("10", 1, (50, 50, 50))
+        row_11 = font.render("11", 1, (50, 50, 50))
+        row_12 = font.render("12", 1, (50, 50, 50))
+        row_13 = font.render("13", 1, (50, 50, 50))
+        row_14 = font.render("14", 1, (50, 50, 50))
+        row_15 = font.render("15", 1, (50, 50, 50))
+        row_16 = font.render("16", 1, (50, 50, 50))
+        row_17 = font.render("17", 1, (50, 50, 50))
+        row_18 = font.render("18", 1, (50, 50, 50))
+        row_19 = font.render("19", 1, (50, 50, 50))
+        row_20 = font.render("20", 1, (50, 50, 50))
+        screen.blit(row_1, (35, 57 + 25 * 0))
+        screen.blit(row_2, (35, 57 + 25 * 1))
+        screen.blit(row_3, (35, 57 + 25 * 2))
+        screen.blit(row_4, (35, 57 + 25 * 3))
+        screen.blit(row_5, (35, 57 + 25 * 4))
+        screen.blit(row_6, (35, 57 + 25 * 5))
+        screen.blit(row_7, (35, 57 + 25 * 6))
+        screen.blit(row_8, (35, 57 + 25 * 7))
+        screen.blit(row_9, (35, 57 + 25 * 8))
+        screen.blit(row_10, (27, 57 + 25 * 9))
+        screen.blit(row_11, (27, 57 + 25 * 10))
+        screen.blit(row_12, (27, 57 + 25 * 11))
+        screen.blit(row_13, (27, 57 + 25 * 12))
+        screen.blit(row_14, (27, 57 + 25 * 13))
+        screen.blit(row_15, (27, 57 + 25 * 14))
+        screen.blit(row_16, (27, 57 + 25 * 15))
+        screen.blit(row_17, (27, 57 + 25 * 16))
+        screen.blit(row_18, (27, 57 + 25 * 17))
+        screen.blit(row_19, (27, 57 + 25 * 18))
+        screen.blit(row_20, (27, 57 + 25 * 19))
+
+        # display player whose turn it is
+        current_player_text = font.render("Turn:", 1, (50, 50, 50))
+        screen.blit(current_player_text, (10, 570))
+        if self._current_player == 'BLACK':
+            pygame.draw.circle(screen, (50, 50, 50), (70, 578), radius)
+        if self._current_player == 'WHITE':
+            pygame.draw.circle(screen, (250, 250, 250), (70, 578), radius)
+            pygame.draw.circle(screen, (50, 50, 50), (70, 578), radius, 1)
+        pygame.display.update()
 
 
 # create new game
@@ -582,6 +636,7 @@ background = pygame.image.load("background.png")
 screen.blit(background, (0, 0))
 # draw the board -- grid lines, pieces, etc & update display
 game.draw_board()
+
 pygame.display.update()
 
 
@@ -591,6 +646,6 @@ while game.get_game_state() == 'UNFINISHED':
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print('hell0!')
+            print('hi!')
 
 print(game.get_game_state())
